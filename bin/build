@@ -51,7 +51,7 @@ if [[ ! -d "$target" ]]; then
 
   cp ../inc/apt-config $target/etc/apt/sources.list
 
-  if [ !-f idshift ]; then
+  if [ ! -f idshift ]; then
   go build ../lib/idshift.go -o ./idshift
   fi
   ./idshift $target 500000
