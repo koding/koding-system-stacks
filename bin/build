@@ -23,6 +23,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 mkdir -p $basedir
+mkdir ../log
 
 cp ../inc/vmroot-config $basedir/config
 /bin/sed -i "s!MY_DIR!$vmroot_name!" $basedir/config
