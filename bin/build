@@ -47,12 +47,12 @@ if [[ ! -d "$target" ]]; then
   echo "#       Base Image Creation BEGIN          #"
   echo "############################################"
   lxc-stop -n $vmroot_name
-  $(which debootstrap) --include $packages --variant=$variant $suite $target $mirror
+  $(which debootstrap) --include $packages --variant=$variant $suite $target $mirror > ../log/$vmroot_name.log
 
   cp ../inc/apt-config $target/etc/apt/sources.list
 
   if [ ! -f idshift ]; then
-  go build ../lib/idshift.go -o ./idshift
+  go build ../lib/idshift.go
   fi
   ./idshift $target 500000
   echo -e "nameserver 8.8.8.8\nsearch koding.com" > $target/etc/resolv.conf
@@ -110,7 +110,7 @@ if [[ ! -d "$target" ]]; then
   fi
   # Install additional packages
   lxc-attach -n $vmroot_name -- /usr/bin/apt-get update
-  lxc-attach -n $vmroot_name -- bash -c "DEBIAN_FRONTEND=noninteractive /usr/bin/apt-get install $required_packages -y --force-yes"
+  lxc-attach -n $vmroot_name -- bash -c "DEBIAN_FRONTEND=noninteractive /usr/bin/apt-get install $required_packages -y --force-yes" 
   lxc-attach -n $vmroot_name -- /usr/bin/apt-get clean
 
   # Configure the VMs to use LDAP lookup for users
