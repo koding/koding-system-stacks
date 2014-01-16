@@ -189,7 +189,7 @@ set -o errexit
 for i in $(ls build_scripts);
    do
     if [ -f $i/install ];
-      do
+      then      
         lxc-attach -n $vmroot_name -- /usr/bin/apt-get update
         lxc-attach -n $vmroot_name -- bash -c "$(cat $i/install)"
         lxc-attach -n $vmroot_name -- /usr/bin/apt-get clean
