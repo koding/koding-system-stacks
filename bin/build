@@ -4,6 +4,7 @@ set –o nounset # Displays an error and exits from a shell script when you use 
 
 # packages are installed with debootstrap
 # additional packages are installed later on with apt-get
+build_ip="10.128.2.1"
 packages="ssh,curl,iputils-ping,iputils-tracepath,telnet,vim,rsync"
 required_packages="ubuntu-standard ubuntu-minimal htop ldap-auth-client git net-tools aptitude apache2 php5 libapache2-mod-php5 php5-cgi ruby screen fish sudo emacs mc iotop iftop nodejs ldap-utils software-properties-common libgd2-xpm"
 additional_packages="erlang ghc swi-prolog clisp ruby-dev ri rake python mercurial subversion cvs bzr default-jdk"
@@ -32,7 +33,7 @@ if [[ "$?" -ne 0 ]]; then
 fi
 
 set +o errexit # Do not exit if the route cannot be set (usually because it is already there)
-ip route add 10.128.2.1 dev lxcbr0
+ip route add $build_ip dev lxcbr0
 if [ $? -eq 2 ]; then
     echo -e "\e[0;31mGot exit code 2 when setting the VMHost route to the VM"
     echo -e "This usually means that this route already existed - if you don't have internet inside the new vmroot check this first!\n"
@@ -47,8 +48,10 @@ if [[ ! -d "$target" ]]; then
 
   cp ../inc/apt-config $target/etc/apt/sources.list
 
-  ../go/build.sh
-  ../go/bin/idshift $target 500000
+  if [ !-f idshift ]; then
+  go build ../lib/idshift.go -o ./idshift
+  fi
+  ./idshift $target 500000
   echo -e "nameserver 8.8.8.8\nsearch koding.com" > $target/etc/resolv.conf
   chown 500000:500000 $target/etc/resolv.conf
   chmod 444 $target/etc/resolv.conf
