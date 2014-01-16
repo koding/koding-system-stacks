@@ -42,7 +42,9 @@ fi
 set -o errexit
 
 if [[ ! -d "$target" ]]; then
-
+  echo "############################################"
+  echo "#       Base Image Creation BEGIN          #"
+  echo "############################################"
   lxc-stop -n $vmroot_name
   $(which debootstrap) --include $packages --variant=$variant $suite $target $mirror
 
@@ -182,7 +184,9 @@ set -o errexit
   /bin/sed -i "s!lxc.rootfs = /var/lib/lxc/$vmroot_name/rootfs!lxc.rootfs = /var/lib/lxc/vmroot/rootfs!" $basedir/config
   /bin/tar -czvf ../$vmroot_name.tgz .
   /bin/sed -i "s!lxc.rootfs = /var/lib/lxc/vmroot/rootfs!lxc.rootfs = /var/lib/lxc/$vmroot_name/rootfs!" $basedir/config
-
+  echo "############################################"
+  echo "#       Base Image Creation COMPLETE       #"
+  echo "############################################"
 for i in $(ls stack-templates);
    do
     if [ -f $i/install.sh ];
