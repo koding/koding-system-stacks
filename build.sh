@@ -7,7 +7,7 @@ set –o nounset # Displays an error and exits from a shell script when you use 
 packages="ssh,curl,iputils-ping,iputils-tracepath,telnet,vim,rsync"
 required_packages="ubuntu-standard ubuntu-minimal htop ldap-auth-client git net-tools aptitude apache2 php5 libapache2-mod-php5 php5-cgi ruby screen fish sudo emacs mc iotop iftop nodejs ldap-utils software-properties-common libgd2-xpm"
 additional_packages="erlang ghc swi-prolog clisp ruby-dev ri rake python mercurial subversion cvs bzr default-jdk"
-suite=$(lsb_release -cs)
+suite="raring"
 variant="buildd"
 vmroot_name=$(date +%d_%m_%Y)"_base"
 basedir="/var/lib/lxc/$vmroot_name"
