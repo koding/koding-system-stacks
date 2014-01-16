@@ -59,7 +59,7 @@ if [[ ! -d "$target" ]]; then
   
   lxc-start -n $vmroot_name -d
   # Wait until VM starts
-  lxc-wait -s RUNNING -n $vmroot_name -t 60
+  lxc-wait -s RUNNING -n $vmroot_name
   if [[ "$?" -ne 0 ]]; then
     echo -e "Error when starting $vmroot_name - did not start after 60s"
     echo -e "\033[1;31m\nABORTING! - VMRoot was not built correctly!\033[0m\n\n"
@@ -79,30 +79,24 @@ if [[ ! -d "$target" ]]; then
   /bin/sed -i 's!none            /run/shm                  tmpfs           nosuid,nodev                                 0 0!none            /run/shm                  tmpfs           nosuid,nodev,noexec,size=500M                                 0 0!'  $target/lib/init/fstab
 
   # Deactivate unneccesary upstart services
-# Can't rename /etc/init/ureadahead.conf.disabled /etc/init/ureadahead.conf.disabled.disabled: No such file or directory
-# Can't rename /etc/init/ureadahead-other.conf /etc/init/ureadahead-other.conf.disabled: No such file or directory
-# Can't rename /etc/init/plymouth-ready.conf /etc/init/plymouth-ready.conf.disabled: No such file or directory
-
   lxc-attach -n $vmroot_name -- /usr/bin/rename s/\.conf/\.conf\.disabled/ $VM_upstart/tty*
   lxc-attach -n $vmroot_name -- /usr/bin/rename s/\.conf/\.conf\.disabled/ $VM_upstart/udev*
   lxc-attach -n $vmroot_name -- /usr/bin/rename s/\.conf/\.conf\.disabled/ $VM_upstart/upstart-*
-  # lxc-attach -n $vmroot_name -- /usr/bin/rename s/\.conf/\.conf\.disabled/ $VM_upstart/ureadahead*
   lxc-attach -n $vmroot_name -- /usr/bin/rename s/\.conf/\.conf\.disabled/ $VM_upstart/hwclock*
-  # lxc-attach -n $vmroot_name -- /usr/bin/rename s/\.conf/\.conf\.disabled/ $VM_upstart/plymouth*
 
 
   # Replace /dev/ptmx by proper symlink
   lxc-attach -n $vmroot_name -- /bin/ln -sf pts/ptmx /dev/ptmx
 
   lxc-stop -n $vmroot_name
-  lxc-wait -s STOPPED -n $vmroot_name -t 60
+  lxc-wait -s STOPPED -n $vmroot_name
   if [[ "$?" -ne 0 ]]; then
     echo -e "Error when stopping $vmroot_name - did not stop after 60s"
     echo -e "\033[1;31m\nABORTING! - VMRoot was not built correctly!\033[0m\n\n"
     exit 1
   fi
   lxc-start -n $vmroot_name -d
-  lxc-wait -s RUNNING -n $vmroot_name -t 60
+  lxc-wait -s RUNNING -n $vmroot_name
   if [[ "$?" -ne 0 ]]; then
     echo -e "Error when starting $vmroot_name - did not start after 60s"
     echo -e "\033[1;31m\nABORTING! - VMRoot was not built correctly!\033[0m\n\n"
@@ -153,7 +147,7 @@ set -o errexit
   # Stop and start because of inaccessible /dev in vmroot
   ######
   lxc-stop -n $vmroot_name
-  lxc-wait -s STOPPED -n $vmroot_name -t 60
+  lxc-wait -s STOPPED -n $vmroot_name
   if [[ "$?" -ne 0 ]]; then
     echo -e "Error when stopping $vmroot_name - did not stop after 60s"
     echo -e "\033[1;31m\nABORTING! - VMRoot was not built correctly!\033[0m\n\n"
@@ -164,7 +158,7 @@ set -o errexit
   /bin/sed -i "s!lxc.rootfs = /var/lib/lxc/vmroot/rootfs!lxc.rootfs = /var/lib/lxc/$vmroot_name/rootfs!" $basedir/config
 
   lxc-start -n $vmroot_name -d
-  lxc-wait -s RUNNING -n $vmroot_name -t 60
+  lxc-wait -s RUNNING -n $vmroot_name
   if [[ "$?" -ne 0 ]]; then
     echo -e "Error when starting $vmroot_name - did not start after 60s"
     echo -e "\033[1;31m\nABORTING! - VMRoot was not built correctly!\033[0m\n\n"
@@ -176,7 +170,7 @@ set -o errexit
   lxc-attach -n $vmroot_name -- /usr/bin/apt-get clean
   
   lxc-stop -n $vmroot_name
-  lxc-wait -s STOPPED -n $vmroot_name -t 60
+  lxc-wait -s STOPPED -n $vmroot_name
   if [[ "$?" -ne 0 ]]; then
     echo -e "Error when stopping $vmroot_name - did not stop after 60s"
     echo -e "\033[1;31m\nABORTING! - VMRoot was not built correctly!\033[0m\n\n"
@@ -191,10 +185,10 @@ for i in $(ls build_scripts);
     if [ -f $i/install ];
       then      
         lxc-attach -n $vmroot_name -- /usr/bin/apt-get update
-        lxc-attach -n $vmroot_name -- bash -c "$(cat $i/install)"
+#        lxc-attach -n $vmroot_name -- bash -c "$(cat $i/install)"
         lxc-attach -n $vmroot_name -- /usr/bin/apt-get clean
         lxc-stop -n $vmroot_name
-        lxc-wait -s STOPPED -n $vmroot_name -t 60
+        lxc-wait -s STOPPED -n $vmroot_name
         if [[ "$?" -ne 0 ]]; then
           echo -e "Error when stopping $vmroot_name - did not stop after 60s"
           echo -e "\033[1;31m\nABORTING! - VMRoot was not built correctly!\033[0m\n\n"
@@ -214,7 +208,7 @@ else
 fi
 
 lxc-stop -n $vmroot_name
-lxc-wait -s STOPPED -n $vmroot_name -t 60
+lxc-wait -s STOPPED -n $vmroot_name
   if [[ "$?" -ne 0 ]]; then
     echo -e "Error when stopping $vmroot_name - did not stop after 60s"
     echo -e "\nThis was the last step, I don't know why this happened but the $vmroot_name was probably still build correctly :)\n\n"
