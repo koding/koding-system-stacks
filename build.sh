@@ -203,7 +203,7 @@ for i in $(ls build_scripts);
         /bin/sed -i "s!lxc.rootfs = /var/lib/lxc/$vmroot_name/rootfs!lxc.rootfs = /var/lib/lxc/vmroot/rootfs!" $basedir/config
         /bin/tar -czvf ../$vmroot_name"_"$i.tgz .
         /bin/sed -i "s!lxc.rootfs = /var/lib/lxc/vmroot/rootfs!lxc.rootfs = /var/lib/lxc/$vmroot_name/rootfs!" $basedir/config
-      done
+      fi
 done
   cd ..
 
