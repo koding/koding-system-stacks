@@ -5,7 +5,7 @@ set –o nounset # Displays an error and exits from a shell script when you use 
 
 # packages are installed with debootstrap
 # additional packages are installed later on with apt-get
-build_ip="10.128.2.1"
+build_ip="10.128.128.1"
 packages="ssh,curl,iputils-ping,iputils-tracepath,telnet,vim,rsync"
 required_packages="ubuntu-standard ubuntu-minimal htop ldap-auth-client git net-tools aptitude apache2 php5 libapache2-mod-php5 php5-cgi ruby screen fish sudo emacs mc iotop iftop nodejs ldap-utils software-properties-common libgd2-xpm"
 additional_packages="erlang ghc swi-prolog clisp ruby-dev ri rake python mercurial subversion cvs bzr default-jdk"

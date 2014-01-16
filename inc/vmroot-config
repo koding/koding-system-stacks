@@ -2,8 +2,8 @@ lxc.network.type = veth
 lxc.network.link = lxcbr0
 lxc.network.veth.pair = vethVMRoot
 lxc.network.flags = up
-lxc.network.ipv4 = 10.128.2.1/9
-lxc.network.ipv4.gateway = 10.128.1.3
+lxc.network.ipv4 = 10.128.128.0/9
+lxc.network.ipv4.gateway = 10.128.128.1
 lxc.rootfs = /var/lib/lxc/MY_DIR/rootfs
 lxc.utsname = vmroot
 
