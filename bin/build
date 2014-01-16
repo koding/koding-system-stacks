@@ -1,4 +1,5 @@
 #!/bin/bash
+cd $(dirname $0)
 set -o errexit
 set –o nounset # Displays an error and exits from a shell script when you use an unset variable in an interactive shell. The default is to display a null value for an unset variable.
 
