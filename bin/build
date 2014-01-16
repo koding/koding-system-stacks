@@ -22,7 +22,7 @@ fi
 
 mkdir -p $basedir
 
-cp vmroot-config $basedir/config
+cp ../inc/vmroot-config $basedir/config
 /bin/sed -i "s!MY_DIR!$vmroot_name!" $basedir/config
 
 id vmroot >> /dev/null 2>&1
@@ -45,7 +45,7 @@ if [[ ! -d "$target" ]]; then
   lxc-stop -n $vmroot_name
   $(which debootstrap) --include $packages --variant=$variant $suite $target $mirror
 
-  cp apt-config $target/etc/apt/sources.list
+  cp ../inc/apt-config $target/etc/apt/sources.list
 
   ../go/build.sh
   ../go/bin/idshift $target 500000
@@ -53,7 +53,7 @@ if [[ ! -d "$target" ]]; then
   chown 500000:500000 $target/etc/resolv.conf
   chmod 444 $target/etc/resolv.conf
 
-  cp kdevent.sh $target/usr/bin/kdevent
+  cp ../inc/kdevent.sh $target/usr/bin/kdevent
   chown 500000:500000 $target/usr/bin/kdevent
   chmod 755 $target/usr/bin/kdevent
   
@@ -116,7 +116,7 @@ if [[ ! -d "$target" ]]; then
   lxc-attach -n $vmroot_name -- /usr/bin/npm install -g kd
   lxc-attach -n $vmroot_name -- /usr/bin/npm install -g kdc
 
-  cp default-site $target/etc/apache2/sites-available/default
+  cp ../inc/default-site $target/etc/apache2/sites-available/default
   /bin/rm -rf $target/var/www
 set +o errexit # Do not exit if this site is already activated
   lxc-attach -n $vmroot_name -- /usr/sbin/a2ensite default
@@ -130,7 +130,7 @@ set -o errexit
   lxc-attach -n $vmroot_name -- apt-add-repository http://dev.marc.waeckerlin.org/repo
   lxc-attach -n $vmroot_name -- apt-get update
   lxc-attach -n $vmroot_name -- apt-get install openssh-akc-server -y
-  cp ldapSSH.sh $target/usr/sbin/
+  cp ../inc/ldapSSH.sh $target/usr/sbin/
   chown vmroot: $target/usr/sbin/ldapSSH.sh
   chmod 755 $target/usr/sbin/ldapSSH.sh
   echo -e "AuthorizedKeysCommand /usr/sbin/ldapSSH.sh" >> $target/etc/ssh/sshd_config
@@ -180,12 +180,12 @@ set -o errexit
   /bin/tar -czvf ../$vmroot_name.tgz .
   /bin/sed -i "s!lxc.rootfs = /var/lib/lxc/vmroot/rootfs!lxc.rootfs = /var/lib/lxc/$vmroot_name/rootfs!" $basedir/config
 
-for i in $(ls build_scripts);
+for i in $(ls stack-templates);
    do
-    if [ -f $i/install ];
+    if [ -f $i/install.sh ];
       then      
         lxc-attach -n $vmroot_name -- /usr/bin/apt-get update
-#        lxc-attach -n $vmroot_name -- bash -c "$(cat $i/install)"
+        lxc-attach -n $vmroot_name -- bash -c "$(cat $i/install.sh)"
         lxc-attach -n $vmroot_name -- /usr/bin/apt-get clean
         lxc-stop -n $vmroot_name
         lxc-wait -s STOPPED -n $vmroot_name
